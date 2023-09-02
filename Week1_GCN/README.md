@@ -2,7 +2,7 @@
 ## 论文精读
 todo
 ## 代码实现
-- 参考 [Graph Convolutional Networks in PyTorch](https://github.com/tkipf/pygcn) 和 [GCN-PyTorch](https://github.com/dragen1860/GCN-PyTorch) 代码
+- 参考 [Graph Convolutional Networks in PyTorch](https://github.com/tkipf/pygcn) 和  代码
 - 分析代码框架：todo
 - 测试结果
   - Cora数据集 准确率
@@ -24,3 +24,4 @@ todo
 ## 参考
 - [SEMI-SUPERVISED CLASSIFICATION WITH GRAPH CONVOLUTIONAL NETWORKS](https://arxiv.org/pdf/1609.02907.pdf)
 - [Graph Convolutional Networks in PyTorch](https://github.com/tkipf/pygcn)
+- [GCN-PyTorch](https://github.com/dragen1860/GCN-PyTorch)
