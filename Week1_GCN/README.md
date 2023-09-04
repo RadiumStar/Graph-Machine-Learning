@@ -24,10 +24,6 @@
 ### Experiment
 - 验证GCN在不同模型方法下的半监督节点分类准确率表现好；方法：比较不同模型（label propagation, semi-supervised embedding, manifold regularization, skip-gram based graph embeddings）在不同数据集上的分类准确率
 - 验证GCN在都是传播模型下的表现最好，说明他们的Renormalization trick表现最好
-### 疑问
-- 作者在文末的一个分类任务中说道即使不训练，完全使用随机初始化的参数W，GCN提取出来的特征就已经十分优秀，为什么，怎么这么强（图结构的局部连接性：GCN利用图结构的邻接关系进行信息传播。在GCN的每一层中，每个节点的特征都是通过与其相邻节点的特征进行聚合得到的。这种局部连接性使得GCN能够从图中获取邻居节点的信息，进而可以直接提取出有用的特征表示？）
-- 如果是对于边也是有信息或者说特征的图，GCN还能适用吗（我想的是把边的特征信息看成类似权重的一个系数放进邻接矩阵中，但是不知道可不可以？）
-- 关于GCN增加层数后准确率下降的问题，看解释原因是over smoothing，层数多了，反而使远处的节点和近处的节点相似而难以区分，如果我就是想提取出更深层的信息，有什么方法加深网络层数？
 ## 代码实现
 - 参考 [Graph Convolutional Networks in PyTorch](https://github.com/tkipf/pygcn) 和 [GCN-PyTorch](https://github.com/dragen1860/GCN-PyTorch) 代码
 - 分析代码框架：[todo]()
