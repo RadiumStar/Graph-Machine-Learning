@@ -1,6 +1,9 @@
 # WEEK1 GCN
 ## 论文精读
-todo
+- Motivation
+- Methodology
+- Experiments
+- 疑问：
 ## 代码实现
 - 参考 [Graph Convolutional Networks in PyTorch](https://github.com/tkipf/pygcn) 和 [GCN-PyTorch](https://github.com/dragen1860/GCN-PyTorch) 代码
 - 分析代码框架：todo
