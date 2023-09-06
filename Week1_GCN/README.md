@@ -1,7 +1,12 @@
 # WEEK1 GCN
-## Structure
+## Introduction
 - `src` 文件夹 是参考代码
-- `code` 文件夹 是实现代码 [todo]()
+- `code` 文件夹 是实现代码
+
+## Usage
+``` shell
+python train.py
+```
 
 ## Result
 - Cora数据集 准确率
