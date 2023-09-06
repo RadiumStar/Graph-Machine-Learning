@@ -1,3 +1,2 @@
 # GraphML_Training
-## Week1 GCN
-- 
+- Week1 GCN 
