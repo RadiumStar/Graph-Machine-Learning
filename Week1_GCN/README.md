@@ -2,6 +2,21 @@
 ## Introduction
 - `src` 文件夹 是参考代码
 - `code` 文件夹 是实现代码
+  - 文件说明（修改自[GCN-PyTorch](https://github.com/dragen1860/GCN-PyTorch)）
+    - config.py: 设置参数
+      - 设置数据集为cora, citeseer, pumbed
+      - 设置学习率，训练轮次，隐藏层神经元个数，dropout参数，
+    - data.py: 处理数据
+    - model.py:
+      - GraphConv层
+      - GCN：默认两层Conv，
+    - train.py: 训练代码，后测试
+  - 代码流程
+    - 处理数据，得到邻接矩阵A，特征矩阵X
+    - 处理特征矩阵X
+    - 将邻接矩阵归一化处理变为 $\hat{A} = \tilde{D}^{-1/2}(A + I_N)\tilde{D}^{-1/2}$
+    - 接入GCN（两层）开始训练
+    - 训练完成，进入测试，计算准确率
 
 ## Usage
 ``` shell
