@@ -1,3 +1,3 @@
 # GraphML_Training
-- ![Week1 GCN](https://github.com/RadiumStar/GraphML_Training/tree/main/Week1_GCN)
-- ![Week2 GCN Hyperparamter(optuna)](https://github.com/RadiumStar/GraphML_Training/tree/main/Week2_GCN_optuna)
+- [Week1 GCN](https://github.com/RadiumStar/GraphML_Training/tree/main/Week1_GCN)
+- [Week2 GCN Hyperparamter(optuna)](https://github.com/RadiumStar/GraphML_Training/tree/main/Week2_GCN_optuna)
