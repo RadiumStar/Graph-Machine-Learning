@@ -41,3 +41,22 @@
 4. `optuna.visualization.plot_parallel_coordinate(study, ['layer_size', 'hidden_channels', 'lr', 'weight_decay', 'dropout_rate'])`：绘制超参数的平行坐标图。可以直观地展示不同超参数组合与目标值之间的关系，帮助观察超参数的取值范围和目标值之间的关系。
 
 5. `optuna.visualization.plot_slice(study, ['layer_size', 'hidden_channels', 'lr', 'weight_decay', 'dropout_rate'])`：绘制超参数的切片图。可以帮助观察每个超参数与目标值之间的关系，从而更好地理解超参数对优化结果的影响。
+
+
+- 结果
+  - cora
+    ``` python
+    Best Parameters: {'hidden_channels': 76, 
+                      'lr': 0.0017085304666074985, 
+                      'weight_decay': 0.00020925329921608887, 
+                      'dropout_rate': 0.3852306303116923}
+    Best Accuracy: 0.827
+    ```
+  - citeseer
+    ``` python
+    Best Parameters: {'hidden_channels': 87, 
+                      'lr': 0.008103369471824794, 
+                      'weight_decay': 0.0024277062769735708, 
+                      'dropout_rate': 0.3766924087636698}
+    Best Accuracy: 0.726
+    ```
