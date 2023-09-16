@@ -1,4 +1,4 @@
-# Week 2
+# Week 2 GCN HyperParameter
 ## 1. 探索 GCN 超参数对准确率的影响
 > 说明：统一使用 cora 数据集进行测试，epochs为200
 
