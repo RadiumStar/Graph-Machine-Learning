@@ -55,134 +55,19 @@
               [1, 0, 1]])
       ```
       
-3. 以同质图 cora 和异质图texas 为例，学会数据集划分方式：
-   1. 如何使用数据集默认的划分方式：通过mask实现，从dataset中读取的数据集的每个元素data有 `train_mask`, `test_mask`等参数，可以通过这个使用默认的划分方式
-      ```py
-      """ Cora Dataset """
-      dataname = 'Cora'
-      # 加载数据集
-      dataset = Planetoid(root='data/' + dataname, name = dataname)
-      data = dataset[0]
+3. 以同质图 cora 和异质图texas 为例，学会数据集划分方式：（`repartition_cora_GCN.py` 和 `repartition_texas_GCN.py`）
+   1. 以Cora数据集为例
+      | 划分方式train:val:test | 1:4.5:4.5 | 2:4:4 | 3:3.5:3.5 | 4:3:3 | 5:2.5:2.5|6:2:2| 7:1.5:1.5|8:1:1|
+      |:--:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+      | 准确率                 | 81.70 ± 1.48 | 83.51 ± 1.01 | 84.07 ± 0.50 | 85.98 ± 0.66 | 85.28 ± 1.10 | 87.48 ± 1.20 | 87.96 ± 1.64 | 87.26 ± 2.80 |
 
-      # 创建GCN模型
-      class GCN(torch.nn.Module):
-         def __init__(self, in_channels, hidden_channels, out_channels):
-            super(GCN, self).__init__()
-            self.conv1 = GCNConv(in_channels, hidden_channels)
-            self.conv2 = GCNConv(hidden_channels, out_channels)
+      ![acc](code/cora_ratio_of_training_data_and_accuracy.png)可以看到训练集占比越高，模型准确率越高，但是过高会导致模型过拟合，从而在测试阶段产生不稳定的现象。因此训练集测试集的占比应该在一个合理的区间范围内
+   2. 以Texas数据集为例
+      | 划分方式train:val:test | 1:4.5:4.5 | 2:4:4 | 3:3.5:3.5 | 4:3:3 | 5:2.5:2.5|6:2:2| 7:1.5:1.5|8:1:1|
+      |:--:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+      | 准确率                 | 48.80 ± 3.24 | 48.31 ± 1.47 | 50.77 ± 4.74 | 50.34 ± 5.92 | 50.53 ± 5.07 | 52.63 ± 2.15 | 48.81 ± 8.1 | 46.05 ± 5.74 |
 
-         def forward(self, x, edge_index):
-            x = self.conv1(x, edge_index)
-            x = F.relu(x)
-            x = self.conv2(x, edge_index)
-            return F.log_softmax(x, dim = 1)
-
-      # 初始化模型和优化器
-      model = GCN(dataset.num_features, 16, dataset.num_classes)
-      optimizer = torch.optim.Adam(model.parameters(), lr = 0.01, weight_decay = 5e-4)
-      criterion = torch.nn.CrossEntropyLoss()
-
-      # 定义训练函数
-      def train():
-         model.train()
-         optimizer.zero_grad()
-         out = model(data.x, data.edge_index)
-         # 这里使用的就是默认的划分方式，通过data.train_mask实现
-         loss = criterion(out[data.train_mask], data.y[data.train_mask])
-         loss.backward()
-         optimizer.step()
-
-      # 定义测试函数
-      def test():
-         model.eval()
-         out = model(data.x, data.edge_index)
-         pred = out.argmax(dim=1)
-         # 这里使用的就是默认的划分方式，通过data.test_mask实现
-         correct = pred[data.test_mask] == data.y[data.test_mask]
-         acc = int(correct.sum()) / int(data.test_mask.sum())
-         return acc
-
-      """ Texas Dataset """
-      """ Texas 的数据集来自 WebKB，但是原始mask方式给了10种，因此需要选择mask[:, idx], idx: 0 ~ 9"""
-      """另外label要变为one-hot类型"""
-      from torch_geometric.datasets import WebKB
-
-      dataset = WebKB(root='data/Texas', name='Texas', transform = T.NormalizeFeatures())
-      data = dataset[0]
-      data.y = F.one_hot(data.y, num_classes=dataset.num_classes).float()
-
-      ...
-      mask_id = 0    # select 0 ~ 9
-      def train():
-         model.train()
-         optimizer.zero_grad()  # Clear gradients.
-         out = model(data.x, data.edge_index)  # Perform a single forward pass.
-         loss = criterion(out[data.train_mask[:, mask_id]], data.y[data.train_mask[:, mask_id]])  # Compute the loss solely based on the training nodes.
-         loss.backward()  # Derive gradients.
-         optimizer.step()  # Update parameters based on gradients.
-         return loss
-
-      def test():
-         model.eval()
-         out = model(data.x, data.edge_index)
-         pred = out.argmax(dim=1)  # Use the class with highest probability.
-         # pred = F.one_hot(pred, num_classes=dataset.num_classes).float()
-         correct = pred[data.test_mask[:, mask_id]] == data.y[data.test_mask[:, mask_id]]  # Check against ground-truth labels.
-         test = int(correct.sum()) / int(data.test_mask.sum())  # Derive ratio of correct predictions.
-         return test
-      ```
-   2. 如何将每个类别以一定的比例随机划分数据集？例如，每个类别的节点按60%、20%、20%划分到训练集、验证集和测试集：将mask换为自己的设定的mask
-      ``` py
-      # 以Cora数据集为例
-      # 定义划分比例
-      train_ratio = 0.6
-      val_ratio = 0.2
-      test_ratio = 0.2
-
-      # 计算划分的节点数量
-      num_nodes = data.num_nodes
-      num_train = int(train_ratio * num_nodes)
-      num_val = int(val_ratio * num_nodes)
-      num_test = num_nodes - num_train - num_val
-
-      # 随机打乱节点索引，做到随机划分数据集
-      perm = torch.randperm(num_nodes)
-
-      # 划分节点索引
-      train_index = perm[:num_train]
-      val_index = perm[num_train:num_train+num_val]
-      test_index = perm[num_train+num_val:]
-
-      # 创建训练集、验证集和测试集的掩码
-      train_mask = torch.zeros(num_nodes, dtype=torch.bool)
-      val_mask = torch.zeros(num_nodes, dtype=torch.bool)
-      test_mask = torch.zeros(num_nodes, dtype=torch.bool)
-
-      # 将划分的节点索引设置为True
-      train_mask[train_index] = True
-      val_mask[val_index] = True
-      test_mask[test_index] = True
-
-      # 将默认的mask设置为自己新设定的mask
-      data.train_mask = train_mask
-      data.val_mask = val_mask
-      data.test_mask = test_mask
-
-      # 后续训练GCN代码和前一问一致
-      ```
-   3. 验证一下划分后是否能用GCN跑起来，以及不同划分方式的效果对比：
-      1. 以Cora数据集为例
-         | 划分方式train:val:test | 1:4.5:4.5 | 2:4:4 | 3:3.5:3.5 | 4:3:3 | 5:2.5:2.5|6:2:2| 7:1.5:1.5|8:1:1|
-         |:--:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-         | 准确率                 | 81.70 ± 1.48 | 83.51 ± 1.01 | 84.07 ± 0.50 | 85.98 ± 0.66 | 85.28 ± 1.10 | 87.48 ± 1.20 | 87.96 ± 1.64 | 87.26 ± 2.80 |
-
-         ![acc](code/cora_ratio_of_training_data_and_accuracy.png)可以看到训练集占比越高，模型准确率越高，但是过高会导致模型过拟合，从而在测试阶段产生不稳定的现象。因此训练集测试集的占比应该在一个合理的区间范围内
-      2. 以Texas数据集为例
-         | 划分方式train:val:test | 1:4.5:4.5 | 2:4:4 | 3:3.5:3.5 | 4:3:3 | 5:2.5:2.5|6:2:2| 7:1.5:1.5|8:1:1|
-         |:--:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-         | 准确率                 | 48.80 ± 3.24 | 48.31 ± 1.47 | 50.77 ± 4.74 | 50.34 ± 5.92 | 50.53 ± 5.07 | 52.63 ± 2.15 | 48.81 ± 8.1 | 46.05 ± 5.74 |
-
-         ![acc](code/texas_ratio_of_training_data_and_accuracy.png)可以看到训练集占比越高，模型准确率越高，但是过高（过了6:2:2）会导致模型过拟合，从而在测试阶段产生极其不稳定的现象，而且准确率会下降。因此训练集测试集的占比应该在一个合理的区间范围内
+      ![acc](code/texas_ratio_of_training_data_and_accuracy.png)可以看到训练集占比越高，模型准确率越高，但是过高（过了6:2:2）会导致模型过拟合，从而在测试阶段产生极其不稳定的现象，而且准确率会下降。因此训练集测试集的占比应该在一个合理的区间范围内
 4. 如何添加自环（self_loop）？加自环有什么用？对应GCN论文里的哪一步？加自环与不加自环、以及加几次自环，对GCN节点分类的效果有什么影响？
    1. 如何添加自环：
       1. 运用 `torch_geometric.utils.add_self_loops`
@@ -203,8 +88,7 @@
          dataset = Planetoid(root='data/Cora', name='Cora', transform=T.AddSelfLoops())
          ```
    2. 加自环的用处：增强节点的自身特征：自环使得节点考虑自身的特征信息，在聚合邻居信息的同时不会忽略自身本来的特征
-   3. GCN论文：蓝色部分，如同上上一问给出的解释![GCN](2023-09-23-17-49-43.png)
-   4. 以cora数据集为例，测试自环多少对GCN准确率的影响
+   3. 以cora数据集为例，测试自环多少对GCN准确率的影响
       ```py
       # which in data.py in week1 code
       def preprocess_adj(adj):
