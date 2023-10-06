@@ -1,4 +1,4 @@
-# WEEK4 GAT
+# Week4 GAT
 ## GAT in Pytorch
 - [GAT_pyg.py](GAT_pyg.py) 是使用Pytorch框架的GAT模型，测试数据集为Cora数据集
 - result
