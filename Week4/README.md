@@ -20,7 +20,7 @@
         
     - 归一化
         $$
-        a_{ij} = \text{softmax}_{j}(e{ij}) = \frac{\text{exp}(e_{ij})}{\sum_{k\in \mathcal{N}}\text{exp}(e_{ik})}
+        a_{ij} = \text{softmax}_{j}(e_{ij}) = \frac{\text{exp}(e_{ij})}{\sum_{k\in \mathcal{N}}\text{exp}(e_{ik})}
         $$
         
     - 将系数$a$改为可训练的神经网络，变成一个权重向量$\vec{a}$ ，向量内积运算改为向量拼接运算 
