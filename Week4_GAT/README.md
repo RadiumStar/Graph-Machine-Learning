@@ -10,7 +10,7 @@
 
 ### Methodology
 
-- 建模过程![GAT](GAT.png)
+- 建模过程![GAT](https://mila.quebec/wp-content/uploads/2018/07/687474703a2f2f7777772e636c2e63616d2e61632e756b2f25374570763237332f696d616765732f6761742e6a7067.jpeg)
     
     - 注意力系数 
         $$
