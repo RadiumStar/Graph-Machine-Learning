@@ -106,4 +106,73 @@
 - 存在问题：代码运行速度慢
 
 ### GAT
-todo
+
+- GAT传播公式
+  - 计算出注意力系数$\alpha_{ij}$
+    $$
+    \alpha_{i j}=\frac{\exp \left(\operatorname{LeakyReLU}\left(\overrightarrow{\mathbf{a}}^{T}\left[\mathbf{W} \vec{h}_{i} \| \mathbf{W} \vec{h}_{j}\right]\right)\right)}{\sum_{k \in \mathcal{N}_{i}} \exp \left(\operatorname{LeakyReLU}\left(\overrightarrow{\mathbf{a}}^{T}\left[\mathbf{W} \vec{h}_{i} \| \mathbf{W} \vec{h}_{k}\right]\right)\right)}
+    $$
+  - 如果 `concat` 为真，那么采用下面的公式得到输出特征
+    $$
+    \vec{h}_{i}^{\prime}=\|_{k=1}^{K} \sigma\left(\sum_{j \in \mathcal{N}_{i}} \alpha_{i j}^{k} \mathbf{W}^{k} \vec{h}_{j}\right)
+    $$
+  - 如果 `concat` 为假，那么采用下面的公式得到输出特征
+    $$
+    \vec{h}_{i}^{\prime}= \sigma\left(\frac{1}{K}\sum_{k=1}^K\sum_{j \in \mathcal{N}_{i}} \alpha_{i j}^{k} \mathbf{W}^{k} \vec{h}_{j}\right)
+    $$
+- GATConv: [GAT_own.py](GAT_own.py)
+    ```py
+    class GATConv(torch.nn.Module):
+        def __init__(self, in_channels, out_channels, heads, concat=True, dropout=0.6):
+            super(GATConv, self).__init__()
+            self.in_channels = in_channels
+            self.out_channels = out_channels
+            self.heads = heads
+            self.concat = concat
+            self.dropout = dropout
+
+            self.W = torch.nn.Parameter(torch.Tensor(in_channels, out_channels))
+
+            self.attn_weights = torch.nn.Parameter(torch.Tensor(2 * out_channels, 1))
+
+            # Initialize weights using Xavier initialization
+            torch.nn.init.xavier_uniform_(self.W.data)
+            torch.nn.init.xavier_uniform_(self.attn_weights.data)
+
+        def forward(self, x, edge_index):
+            h_list = []
+            for i in range(self.heads):
+                h = torch.matmul(x, self.W)  
+                
+                # Self-attention mechanism
+                edge_index_i, edge_index_j = edge_index
+                edge_index_j = edge_index_j.to(x.device)
+                h_i = h[edge_index_i]
+                h_j = h[edge_index_j]
+                edge_features = torch.cat([h_i, h_j], dim=-1)
+                attn_weights = F.leaky_relu(torch.matmul(edge_features, self.attn_weights), 
+                                            negative_slope=0.2)
+                attn_weights = F.softmax(attn_weights, dim=0)
+                
+                # Apply dropout to attention weights
+                attn_weights = F.dropout(attn_weights, p=self.dropout, training=self.training)
+                
+                # Apply attention to neighbors
+                h_j = h_j * attn_weights
+                h_head = torch.zeros_like(h)  
+                
+                for idx, target_idx in enumerate(edge_index_i):
+                    h_head[target_idx] += h_j[idx]
+                    
+                h_list.append(h_head)
+
+            if self.concat:
+                h_out = torch.cat(h_list, dim=1)
+            else:
+                h_out = sum(h_list) / len(h_list)
+                
+            return h_out
+    ```
+- 存在问题：
+  - 计算速度极慢
+  - 好像无法进行反向传播更新 `GATConv` 的权重 $\mathbf{W}, \vec{\mathbf{a}}$，导致一直输出相同的结果
