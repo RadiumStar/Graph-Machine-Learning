@@ -44,6 +44,8 @@ class GraphSAGE(nn.Module):
 |:--------:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | accuracy |79.00|80.40|78.90|80.60|80.70|79.80|80.30|79.80|79.70|78.40|
 
+![acc](code/GraphSAGE_acc.png)
+![loss](code/GraphSAGE_loss.png)
 
 
 ## Conference
