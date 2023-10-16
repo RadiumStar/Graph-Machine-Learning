@@ -4,7 +4,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv
 
-dataset = Planetoid(root='data/Cora', name='Cora')
+dataset = Planetoid(root='../../data/Cora', name='Cora')
 
 data = dataset[0]
 

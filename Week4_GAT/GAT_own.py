@@ -5,7 +5,7 @@ from torch_geometric.datasets import Planetoid
 
 
 # 加载Cora数据集
-dataset = Planetoid(root='data/Cora', name='Cora')
+dataset = Planetoid(root='../data/Cora', name='Cora')
 data = dataset[0]
 
 class GATConv(torch.nn.Module):

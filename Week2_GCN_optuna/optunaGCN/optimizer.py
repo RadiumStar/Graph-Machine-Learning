@@ -60,7 +60,7 @@ def objective(trial):
     dropout_rate = trial.suggest_uniform('dropout_rate', 0.1, 0.7)
 
     # 加载数据集
-    dataset = Planetoid(root='data/' + dataset_name[select], name = dataset_name[select], transform=T.NormalizeFeatures())
+    dataset = Planetoid(root='../../data/' + dataset_name[select], name = dataset_name[select], transform=T.NormalizeFeatures())
 
     data = dataset[0]
     data = data.to('cuda')

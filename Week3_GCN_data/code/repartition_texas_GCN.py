@@ -4,7 +4,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import WebKB
 from torch_geometric.nn import GCNConv
 
-dataset = WebKB(root='data/Texas', name='Texas', transform = T.NormalizeFeatures())
+dataset = WebKB(root='../../data/Texas', name='Texas', transform = T.NormalizeFeatures())
 data = dataset[0]
 # data.y = F.one_hot(data.y, num_classes=dataset.num_classes).float()
 

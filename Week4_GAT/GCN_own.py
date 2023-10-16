@@ -6,7 +6,7 @@ from torch_geometric.datasets import Planetoid
 import matplotlib.pyplot as plt
 
 # 加载Cora数据集
-dataset = Planetoid(root='data/Cora', name='Cora', transform = T.NormalizeFeatures())
+dataset = Planetoid(root='../data/Cora', name='Cora', transform = T.NormalizeFeatures())
 data = dataset[0]
 
 class GCNConv(torch.nn.Module):
