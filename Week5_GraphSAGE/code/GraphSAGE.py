@@ -68,7 +68,7 @@ def visualize(losses, accuracies):
 
 if __name__ == '__main__':
     model = GraphSAGE(in_channels = dataset.num_features, 
-                    hidden_channels = 64, 
+                    hidden_channels = 16, 
                     out_channels = dataset.num_classes)
     optimizer = optim.Adam(model.parameters(), lr = 0.01, weight_decay = 5e-4)
 
@@ -83,4 +83,4 @@ if __name__ == '__main__':
     acc = test(model)
     print("Accuracy: %.4f" % acc)
 
-    visualize(losses, accuracies)
+    # visualize(losses, accuracies)
