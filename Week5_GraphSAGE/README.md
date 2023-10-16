@@ -21,7 +21,30 @@
 
 ## GraphSAGE in `torch_geometric`
 - code
-- result
+
+```py
+class GraphSAGE(nn.Module):
+    def __init__(self, in_channels, hidden_channels, out_channels, dropout_rate = 0.6):
+        super(GraphSAGE, self).__init__()
+        self.conv1 = SAGEConv(in_channels, hidden_channels)
+        self.conv2 = SAGEConv(hidden_channels, out_channels)
+        self.dropout = nn.Dropout(dropout_rate)
+
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = self.dropout(x)
+        x = self.conv2(x, edge_index)
+        return F.log_softmax(x, dim=1)
+```
+
+- result: 78.15 ± 0.54
+
+| rounds   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|:--------:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| accuracy |77.50|79.00|77.80|77.90|78.70|78.10|78.90|77.60|78.40|77.60|
+
+
 
 ## Conference
 - [Inductive Representation Learning on Large Graphs](https://arxiv.org/pdf/1706.02216.pdf)

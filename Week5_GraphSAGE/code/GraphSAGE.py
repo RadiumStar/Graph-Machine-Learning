@@ -5,11 +5,11 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import SAGEConv
 import torch.nn.functional as F
 
-# 加载Cora数据集
+
 dataset = Planetoid(root='../../data/Cora', name='Cora')
 data = dataset[0]
 
-# 定义GraphSAGE模型
+
 class GraphSAGE(nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, dropout_rate = 0.6):
         super(GraphSAGE, self).__init__()
