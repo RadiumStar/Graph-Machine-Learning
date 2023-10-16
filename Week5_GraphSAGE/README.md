@@ -19,6 +19,11 @@
 - Inductive: Inductive任务在训练时只能访问一部分节点和它们的邻居，关注的是在模型从训练数据中学到的信息的基础上，对以前未见过的节点进行预测，在测试时要处理整个图，包括从未见过的节点。因此要求模型必须泛化到未见过的节点
 - Difference between Transductive and Inductive: 所预测的样本在模型训练的时候已经使用或者访问过了，为transductive；否则为inductive
 
+## GraphSAGE in `torch_geometric`
+- code
+- result
+
 ## Conference
 - [Inductive Representation Learning on Large Graphs](https://arxiv.org/pdf/1706.02216.pdf)
+- [pytorch geometric教程三 GraphSAGE源码详解+实战](https://blog.csdn.net/weixin_39925939/article/details/121343538)
 
