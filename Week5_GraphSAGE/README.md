@@ -5,7 +5,7 @@
 
 ### Methodology
 - 建模过程
-  - embedding ![GraphSAGE Algorithm](GraphSAGE_Algorithm.png)
+  - embedding ![GraphSAGE_Algorithm](GraphSAGE_Algorithm.png)
     - 首先，对于图中各个节点$v$ ，分别与它的直接邻居节点作聚合（k = 0的时候就是节点本身的特征向量）然后拼接到之前k-1层的节点表征向量$\mathbf{h}$  中；这样循环 $K$ 次以后得到最终输出 $\mathbf{z}_v$
     - minibatch：对于minibatch，我们就不对图中各个节点，而是只计算那些每个深度上满足递归所需的表示的节点
     - 邻居采样：不使用节点所有的邻居，而是每次迭代都均匀采样
