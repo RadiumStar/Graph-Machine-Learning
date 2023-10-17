@@ -5,10 +5,19 @@
 
 ### Methodology
 - 建模过程
-  - sample
+  - embedding ![GraphSAGE Algorithm](GraphSAGE_Algorithm.png)
+    - 首先，对于图中各个节点$v$ ，分别与它的直接邻居节点作聚合（k = 0的时候就是节点本身的特征向量）然后拼接到之前k-1层的节点表征向量$\mathbf{h}$  中；这样循环 $K$ 次以后得到最终输出 $\mathbf{z}_v$
+    - minibatch：对于minibatch，我们就不对图中各个节点，而是只计算那些每个深度上满足递归所需的表示的节点
+    - 邻居采样：不使用节点所有的邻居，而是每次迭代都均匀采样
   - aggregate
     - mean
+        $$
+        \mathbf{h}_{v}^{k} \leftarrow \sigma\left(\mathbf{W} \cdot \operatorname{MEAN}\left(\left\{\mathbf{h}_{v}^{k-1}\right\} \cup\left\{\mathbf{h}_{u}^{k-1}, \forall u \in \mathcal{N}(v)\right\}\right)\right)
+        $$
     - max
+        $$
+        \operatorname{AGGREGATE}_{k}^{\mathrm{pool}}=\max \left(\left\{\sigma\left(\mathbf{W}_{\text {pool }} \mathbf{h}_{u_{i}}^{k}+\mathbf{b}\right), \forall u_{i} \in \mathcal{N}(v)\right\}\right)
+        $$
     - lstm
 - loss
     $$
@@ -18,8 +27,11 @@
     GraphSAGE的loss分为两个部分：前一部分是用于学习正样本的相似性，从而增强正样本节点对节点$u$的相似性；后一部分是负采样损失，用于学习负样本的差异性。在这里，$Q$ 是负样本的数量，$\mathbb{E}_{v_{n} \sim P_{n}(v)}$ 表示从负样本分布 $P_{n}(v)$ 中随机采样 $Q$个负样本节点 $v_{n}$，而 $\mathbf{z}_{v_{n}}$ 是负样本节点 $v_{n}$的嵌入向量，从而增强负样本节点对节点  $u$ 的差异性
 
 ### Experiments
-
-### Conclusion
+- 验证GraphSAGE 的分类任务表现性能：citation， reddit， PPI
+    
+- 比较不同的aggregate方式
+    
+    - LSTM, pool, mean 聚合比基于 GCN 的强；其中 LSTM和pool表现较好，pool运行速度比LSTM快![Experiments](GraphSAGE_Experiments.png)
 
 
 ## Transductive & Inductive 
