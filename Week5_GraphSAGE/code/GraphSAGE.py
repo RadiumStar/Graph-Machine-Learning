@@ -13,11 +13,11 @@ data = dataset[0]
 
 
 class GraphSAGE(nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, hidden_layers = 1, dropout_rate = 0.5):
+    def __init__(self, in_channels, hidden_channels, out_channels, hidden_layers = 1, dropout_rate = 0.5, aggr = 'mean'):
         super(GraphSAGE, self).__init__()
-        self.conv1 = SAGEConv(in_channels, hidden_channels)
-        self.conv2 = SAGEConv(hidden_channels, out_channels)
-        self.conv = SAGEConv(hidden_channels, hidden_channels)
+        self.conv1 = SAGEConv(in_channels, hidden_channels, aggr=aggr)
+        self.conv2 = SAGEConv(hidden_channels, out_channels, aggr=aggr)
+        self.conv = SAGEConv(hidden_channels, hidden_channels, aggr=aggr)
         self.dropout = nn.Dropout(dropout_rate)
         self.hidden_layers = hidden_layers
 

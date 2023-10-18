@@ -31,11 +31,13 @@ def test(model):
 
 if __name__ == '__main__':
     accs = []
+    aggr = 'max'
     for layers in range(1, 9):
         model = GraphSAGE(in_channels = dataset.num_features, 
                           hidden_channels = 16, 
                           out_channels = dataset.num_classes, 
-                          hidden_layers = layers)
+                          hidden_layers = layers, 
+                          aggr = aggr)
         optimizer = optim.Adam(model.parameters(), lr = 0.01, weight_decay = 5e-4)
 
         epoches = 200
@@ -54,7 +56,7 @@ if __name__ == '__main__':
     plt.plot(range(1, 9), accs)
     plt.xlabel("hidden layers")
     plt.ylabel("accuracy")
-    plt.title("Performance of GraphSAGE in different number of hidden layers")
+    plt.title("Performance of GraphSAGE in different number of hidden layers: " + aggr)
     plt.grid(True)
-    plt.savefig("number_of_hidden_layers_GraphSAGE_performance.png", dpi = 600)
+    plt.savefig("number_of_hidden_layers_GraphSAGE_performance_" + aggr + ".png", dpi = 600)
     plt.show()
