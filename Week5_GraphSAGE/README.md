@@ -44,16 +44,23 @@
 
 ```py
 class GraphSAGE(nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, dropout_rate = 0.5):
+    def __init__(self, in_channels, hidden_channels, out_channels, hidden_layers = 1, dropout_rate = 0.5):
         super(GraphSAGE, self).__init__()
         self.conv1 = SAGEConv(in_channels, hidden_channels)
         self.conv2 = SAGEConv(hidden_channels, out_channels)
+        self.conv = SAGEConv(hidden_channels, hidden_channels)
         self.dropout = nn.Dropout(dropout_rate)
+        self.hidden_layers = hidden_layers
 
     def forward(self, x, edge_index):
+        x = self.dropout(x)
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = self.dropout(x)
+        for _ in range(self.hidden_layers - 1): 
+            x = self.conv(x, edge_index)
+            x = F.relu(x)
+            x = self.dropout(x)
         x = self.conv2(x, edge_index)
         return F.log_softmax(x, dim=1)
 ```
