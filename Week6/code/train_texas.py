@@ -2,24 +2,24 @@ import model
 import torch
 import torch.nn.functional as F
 import torch_geometric.transforms as T
-from torch_geometric.datasets import Planetoid
+from torch_geometric.datasets import WebKB
 from torch_geometric.utils import to_dense_adj
 import matplotlib.pyplot as plt
 
-def train(gnn, optimizer, data, device):
+def train(gnn, optimizer, data, device, mask_id):
     gnn.train()
     optimizer.zero_grad()
     out = gnn(data.x, adj)
-    loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask]).to(device)
+    loss = F.cross_entropy(out[data.train_mask[:, mask_id]], data.y[data.train_mask[:, mask_id]]).to(device)
     loss.backward()
     optimizer.step()
-    return loss.item(), test(gnn, data, device)
+    return loss.item(), test(gnn, data, device, mask_id)
 
-def test(gnn, data, device):
+def test(gnn, data, device, mask_id):
     gnn.eval()
     out = gnn(data.x, adj)
-    correct = int(out[data.test_mask].max(1)[1].eq(data.y[data.test_mask]).sum())
-    acc = correct / int(data.test_mask.sum())
+    correct = int(out[data.test_mask[:, mask_id]].max(1)[1].eq(data.y[data.test_mask[:, mask_id]]).sum())
+    acc = correct / int(data.test_mask[:, mask_id].sum())
     return acc
 
 
@@ -45,14 +45,15 @@ def visualize(losses, accuracies, dataname):
 
 
 if __name__ == '__main__':
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Using device:", device)
 
-    dataname = 'CiteSeer'   # Cora, CiteSeer & PubMed
-    dataset = Planetoid(root='../../data/' + dataname, name = dataname)
-    data = dataset[0].to(device)
-
+    dataname = 'Texas'   
+    dataset = WebKB(root='../../data/' + dataname, name = dataname)
+    data = dataset[0]
+    data = data.to(device)
     adj = to_dense_adj(data.edge_index)[0].to(device)
+    mask_id = 0     # select 0 ~ 9
 
     option = 1
     gnn = model.GNN(in_channels = dataset.num_features,
@@ -61,21 +62,21 @@ if __name__ == '__main__':
                     num_layers = 2,
                     temperature = 2.0, 
                     option = option, 
-                    dropout_rate = 0.6).to(device)
+                    dropout_rate = 0.5).to(device)
     
     optimizer = torch.optim.Adam(gnn.parameters(), lr = 0.05, weight_decay = 5e-4)
 
-    # print(data.x.size(), data.edge_index.size())
     epochs = 200
     losses, accuracies = [], []
 
     for epoch in range(epochs):
-        loss, acc = train(gnn, optimizer, data, device)
-        losses.append(loss)
-        accuracies.append(acc)
+        loss, acc = train(gnn, optimizer, data, device, mask_id)
+        if epoch % 10 == 0:
+            losses.append(loss)
+            accuracies.append(acc)
         print("Epoch %d; Loss: %f; Accuracy: %f" % (epoch, loss, acc))
 
-    acc = test(gnn, data, device)
+    acc = test(gnn, data, device, mask_id)
     print("Test Accuracy: %.4f" % acc)
 
-    visualize(losses, accuracies, dataname + "_option" + str(option))
+    visualize(losses, accuracies, dataname + "_mask_id" + str(mask_id) + "_option" + str(option))
