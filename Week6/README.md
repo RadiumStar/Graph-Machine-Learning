@@ -27,3 +27,6 @@
         H_{LP} = \tilde{D}^{-1/2}\tilde{A}\tilde{D}^{-1/2}, \tilde{A} = A + I, H_{HP} = I - H_{LP}
         $$
 - 实现2层的GNN网络，中间层的维度不做要求
+
+## 2. Train
+1. `cora`: 81.40% ![loss](code/GNN_loss.png) ![acc](code/GNN_acc.png)
