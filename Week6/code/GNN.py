@@ -59,7 +59,7 @@ T = 1.0  # 温度参数
 X = torch.randn(num_nodes, in_channels)
 A = torch.randn(num_nodes, num_nodes)
 
-gnn = GNN(in_channels, hidden_channels, out_channels, num_layers)
-output = gnn(X, A)
+model = GNN(in_channels, hidden_channels, out_channels, num_layers)
+output = model(X, A)
 
 print(output)
