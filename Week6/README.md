@@ -79,7 +79,7 @@
 2. `GNN`
     ```py
     class GNN(nn.Module):
-        def __init__(self, in_channels, hidden_channels, out_channels, num_layers, temperature = 1, option = 1, dropout_rate = 0.5, ):
+        def __init__(self, in_channels, hidden_channels, out_channels, num_layers, temperature = 1, option = 1, dropout_rate = 0.5):
             super(GNN, self).__init__()
             self.layers = nn.ModuleList()
             self.in_channels = in_channels
