@@ -96,7 +96,7 @@ if __name__ == '__main__':
                     option = option, 
                     dropout_rate = 0.5).to(device)
     
-    optimizer = torch.optim.Adam(gnn.parameters(), lr = 0.286, weight_decay = 5e-4)
+    optimizer = torch.optim.Adam(gnn.parameters(), lr = 0.05, weight_decay = 5e-4)
 
     epochs = 200
     losses, accuracies = [], []
@@ -106,8 +106,6 @@ if __name__ == '__main__':
         if epoch % 10 == 0:
             losses.append(loss)
             accuracies.append(acc)
-        if acc > 0.88: 
-            optimizer = torch.optim.Adam(gnn.parameters(), lr = 0.01, weight_decay = 5e-4)
         print("Epoch %d; Loss: %f; Accuracy: %f" % (epoch, loss, acc))
 
     acc = test(gnn, data, device, mask_id)
