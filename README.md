@@ -4,4 +4,4 @@
 - [Week3 GCN data processing](https://github.com/RadiumStar/Graph-Machine-Learning/tree/main/Week3_GCN_data)
 - [Week4 GAT](https://github.com/RadiumStar/Graph-Machine-Learning/tree/main/Week4_GAT)
 - [Week5 GraphSAGE](https://github.com/RadiumStar/Graph-Machine-Learning/tree/main/Week5_GraphSAGE)
-- [Week6 Design a GNN](https://github.com/RadiumStar/Graph-Machine-Learning/tree/main/Week6)
+- [Week6 ACM-GNN](https://github.com/RadiumStar/Graph-Machine-Learning/tree/main/Week6)
